@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="本单词本使用说明如下："
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="（1）右上角菜单栏包括三个选项：单词本、模糊查询、生词本、新闻早知道、帮助 "
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="（2）单词本：主页面，显示单词，单击查看详情并可进行修改，长按可删除该单词； "
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="（3）模糊查询：用来在单词本中进行单词的查找；"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="（4）生词本：可以添加不认识的单词以便复习记忆；"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="（5）新闻早知道：最新的英语新闻版面；"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="（6）帮助页面：对该单词本的简单介绍 "
+        android:textSize="15dp" />
+
+
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
