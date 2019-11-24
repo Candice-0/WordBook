@@ -1,6 +1,7 @@
 package com.example.words;
 
 import android.app.Activity;
+import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //创MyDataBaseHelper对象（params1：上下文环境，params2：数据库名，params3：允许我们在查询数据的时候返回一个cursor，这里添null，就可以了，params4：数据库版本号）
-        dbHelper = new MyDatabaseHelper(MainActivity.this, "wordsDB", null, 1);
+        dbHelper = new MyDatabaseHelper(MainActivity.this);
 
 
         //初始化设置三个单词
@@ -180,114 +181,121 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showWord(final int position){
-        setContentView(R.layout.word_show);
-        final TextView wordShow = (TextView) findViewById(R.id.wordShow);
-        final TextView meaningShow = (TextView)findViewById(R.id.meaningShow);
-        final TextView exampleShow = (TextView)findViewById(R.id.exampleShow);
-
-        //接受传参
-        wordShow.setText(words[position].getWord());
-        meaningShow.setText(words[position].getMeaning());
-        exampleShow.setText(words[position].getExample());
-
-        //点击弹出修改提示框modify_builder
-        Button modify = (Button)findViewById(R.id.modify);
-        modify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder modify_builder = new AlertDialog.Builder(MainActivity.this);
-                final LayoutInflater inflater1 = getLayoutInflater();
-                final View modify_view = inflater1.inflate(R.layout.edit_words, null);
-                modify_builder.setView(modify_view).setTitle("修改单词").setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        EditText editMeaning = modify_view.findViewById(R.id.editMeaning);
-                        EditText editExample = modify_view.findViewById(R.id.editExample);
-
-                        String newMeaning = editMeaning.getText().toString();
-                        String newExample = editExample.getText().toString();
-                        Log.d("newMeaning:", newMeaning);
-                        Log.d("newExample:", newExample);
-
-                        if(newMeaning != "" && newExample != ""){
-                            meaningShow.setText(newMeaning);
-                            exampleShow.setText(newExample);
-                            afterMeaning = newMeaning;
-                            afterExample = newExample;
-                        }
-
-
-
-                    }
-
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-                modify_builder.show();
-
-            }
-
-        });
-
-        Button collect = (Button)findViewById(R.id.collect);
-        collect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //传递些简单的参数
-                Intent intent1 = new Intent();
-                intent1.setClass(MainActivity.this,WordBook.class);
-
-                //intent1.putExtra("usr", "lyx");
-                //intent1.putExtra("pwd", "123456");
-                //startActivity(intent1);
-
-                Bundle bundleSimple = new Bundle();
-                bundleSimple.putString("word", words[position].getWord());
-                bundleSimple.putString("meaning", words[position].getMeaning());
-                bundleSimple.putString("example", words[position].getExample());
-                intent1.putExtras(bundleSimple);
-
-                startActivity(intent1);
-
-            }
-        });
-
-        Button back = (Button)findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("afterMeaning:", afterMeaning);
-                Log.d("afterExample:", afterExample);
-
-                if(afterMeaning == "" && afterExample == ""){
-                    setContentView(R.layout.activity_main);
-                    ClickList(words);
-                }else{
-                    words[position].setMeaning(afterMeaning);
-                    words[position].setExample(afterExample);
-                    list.set(position, words[position]);
-                    words = list.getData();
-                    for(int i = 0; i < words.length; i++){
-                        if(words[i] == null)
-                            break;
-                        Log.d("after!!!:", words[i].getWord());
-                        Log.d("after!!!:", words[i].getMeaning());
-                        Log.d("after!!!:", words[i].getExample());
-
-                    }
-                    setContentView(R.layout.activity_main);
-                    ClickList(words);
-                    addWords();
-                    }
-
-                }
-
-
-            });
-        }
+        Intent intent = new Intent(MainActivity.this, showWord.class);
+        Bundle bundleSimple = new Bundle();
+        bundleSimple.putString("word", words[position].getWord());
+        bundleSimple.putString("meaning", words[position].getMeaning());
+        bundleSimple.putString("example", words[position].getExample());
+        intent.putExtras(bundleSimple);
+        startActivity(intent);
+//        setContentView(R.layout.word_show);
+//        final TextView wordShow = (TextView) findViewById(R.id.wordShow);
+//        final TextView meaningShow = (TextView)findViewById(R.id.meaningShow);
+//        final TextView exampleShow = (TextView)findViewById(R.id.exampleShow);
+//
+//        //接受传参
+//        wordShow.setText(words[position].getWord());
+//        meaningShow.setText(words[position].getMeaning());
+//        exampleShow.setText(words[position].getExample());
+//
+//        //点击弹出修改提示框modify_builder
+//        Button modify = (Button)findViewById(R.id.modify);
+//        modify.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                AlertDialog.Builder modify_builder = new AlertDialog.Builder(MainActivity.this);
+//                final LayoutInflater inflater1 = getLayoutInflater();
+//                final View modify_view = inflater1.inflate(R.layout.edit_words, null);
+//                modify_builder.setView(modify_view).setTitle("修改单词").setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        EditText editMeaning = modify_view.findViewById(R.id.editMeaning);
+//                        EditText editExample = modify_view.findViewById(R.id.editExample);
+//
+//                        String newMeaning = editMeaning.getText().toString();
+//                        String newExample = editExample.getText().toString();
+//                        Log.d("newMeaning:", newMeaning);
+//                        Log.d("newExample:", newExample);
+//
+//                        if(newMeaning != "" && newExample != ""){
+//                            meaningShow.setText(newMeaning);
+//                            exampleShow.setText(newExample);
+//                            afterMeaning = newMeaning;
+//                            afterExample = newExample;
+//                        }
+//
+//
+//
+//                    }
+//
+//                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                    }
+//                });
+//                modify_builder.show();
+//
+//            }
+//
+//        });
+//
+//        Button collect = (Button)findViewById(R.id.collect);
+//        collect.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //传递些简单的参数
+//                Intent intent1 = new Intent();
+//                intent1.setClass(MainActivity.this,WordBook.class);
+//
+//                //intent1.putExtra("usr", "lyx");
+//                //intent1.putExtra("pwd", "123456");
+//                //startActivity(intent1);
+//
+//                Bundle bundleSimple = new Bundle();
+//                bundleSimple.putString("word", words[position].getWord());
+//                bundleSimple.putString("meaning", words[position].getMeaning());
+//                bundleSimple.putString("example", words[position].getExample());
+//                intent1.putExtras(bundleSimple);
+//
+//                startActivity(intent1);
+//
+//            }
+//        });
+//
+//        Button back = (Button)findViewById(R.id.back);
+//        back.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d("afterMeaning:", afterMeaning);
+//                Log.d("afterExample:", afterExample);
+//
+//                if(afterMeaning == "" && afterExample == ""){
+//                    setContentView(R.layout.activity_main);
+//                    ClickList(words);
+//                }else{
+//                    words[position].setMeaning(afterMeaning);
+//                    words[position].setExample(afterExample);
+//                    list.set(position, words[position]);
+//                    words = list.getData();
+//                    for(int i = 0; i < words.length; i++){
+//                        if(words[i] == null)
+//                            break;
+//                        Log.d("after!!!:", words[i].getWord());
+//                        Log.d("after!!!:", words[i].getMeaning());
+//                        Log.d("after!!!:", words[i].getExample());
+//
+//                    }
+//                    setContentView(R.layout.activity_main);
+//                    ClickList(words);
+//                    addWords();
+//                    }
+//
+//                }
+//
+//
+//            });
+    }
 
 
     public void addWords(){

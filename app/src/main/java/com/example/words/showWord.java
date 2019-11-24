@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,16 +13,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Locale;
+
 public class showWord extends AppCompatActivity {
 
     String afterMeaning = "";
     String afterExample = "";
+    private TextToSpeech textToSpeech;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +42,10 @@ public class showWord extends AppCompatActivity {
         wordShow.setText(bundle.getString("word"));
         meaningShow.setText(bundle.getString("meaning"));
         exampleShow.setText(bundle.getString("example"));
+
+        final String word = bundle.getString("word");
+        final String meaning = bundle.getString("meaning");
+        final String example = bundle.getString("example");
 
         //点击弹出修改提示框modify_builder
         Button modify = (Button)findViewById(R.id.modify);
@@ -94,6 +103,50 @@ public class showWord extends AppCompatActivity {
                 startActivity(intent);
 //                setResult(2, intent);//返回值调用函数，其中2为resultCode，返回值的标志
 //                finish();//传值结束
+            }
+        });
+
+        Button collect = (Button)findViewById(R.id.collect);
+        collect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //传递些简单的参数
+                Intent intent1 = new Intent();
+                intent1.setClass(showWord.this,WordBook.class);
+
+                //intent1.putExtra("usr", "lyx");
+                //intent1.putExtra("pwd", "123456");
+                //startActivity(intent1);
+
+                Bundle bundleSimple = new Bundle();
+                bundleSimple.putString("word", word);
+                bundleSimple.putString("meaning", meaning);
+                bundleSimple.putString("example", example);
+                intent1.putExtras(bundleSimple);
+
+                startActivity(intent1);
+
+            }
+        });
+
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == textToSpeech.SUCCESS) {
+                    int result = textToSpeech.setLanguage(Locale.CHINA);
+                    if (result != TextToSpeech.LANG_COUNTRY_AVAILABLE
+                            && result != TextToSpeech.LANG_AVAILABLE){
+                        Toast.makeText(showWord.this, "TTS暂时不支持这种语音的朗读！",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+        Button speak = (Button)findViewById(R.id.speak);
+        speak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textToSpeech.speak(word, TextToSpeech.QUEUE_ADD, null);
             }
         });
     }

@@ -19,7 +19,7 @@
 
         <provider
             android:name=".WordsProvider"
-            android:authorities="cn.edu.bistu.cs.se.wordsprovider"
+            android:authorities="com.example.vocabularybook"
             android:enabled="true"
             android:exported="true" />
 

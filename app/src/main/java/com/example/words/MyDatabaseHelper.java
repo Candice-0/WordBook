@@ -18,8 +18,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             "example text)" ;
 
     private Context context;
-    public MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public MyDatabaseHelper(Context context) {
+        super(context, "wordsDB", null, 1);
         this.context = context;
     }
 
